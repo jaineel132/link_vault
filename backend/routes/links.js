@@ -75,11 +75,7 @@ router.get('/:id', async (req, res) => {
 // POST add new link
 router.post('/', async (req, res) => {
   try {
-    const name = requireNonEmptyString(req.body.name, 'name');
-    const url = requireValidUrl(req.body.url, 'url');
-    const notes = optionalString(req.body.notes, 'notes');
-    const collectionId = optionalId(req.body.collectionId, 'collectionId');
-    const tags = optionalStringArray(req.body.tags, 'tags');
+     const { name, url, notes = '', collectionId = null, tags = [] } = req.body;
 
     // check for duplicate URL
     const existing = await pool.query('SELECT * FROM links WHERE url = $1', [url]);
