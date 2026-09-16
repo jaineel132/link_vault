@@ -59,6 +59,20 @@ router.get('/collection/:id', async (req, res) => {
   }
 });
 
+// GET links page by page — MUST be before /:id
+router.get('/page/:n', async (req, res) => {
+  try {
+    const page = parseId(req.params.n, 'page');
+    const size = 20;
+    const result = await pool.query('SELECT * FROM links ORDER BY id DESC');
+    const start = page * size;
+    res.json(result.rows.slice(start, start + size - 1).map(normalize));
+  } catch (err) {
+    if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
+    res.status(500).json({ error: "Failed to fetch page" });
+  }
+});
+
 // GET link by ID
 router.get('/:id', async (req, res) => {
   try {
