@@ -59,6 +59,17 @@ router.get('/collection/:id', async (req, res) => {
   }
 });
 
+// GET number of links — MUST be before /:id
+router.get('/count', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT COUNT(*) AS count FROM links');
+    res.json({ count: Number(result.rows[0].count) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to count links" });
+  }
+});
+
 // GET link by ID
 router.get('/:id', async (req, res) => {
   try {
