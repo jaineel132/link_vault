@@ -340,7 +340,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 // ── Ready ─────────────────────────────────────────────────────────────────────
 client.once(Events.ClientReady, (c) => {
-  console.log(`✅ LinVault bot ready as ${c.user.tag}`);
+  console.log('[bot]', `✅ LinVault bot ready as ${c.user.tag}`);
   scheduleWeeklyDigest(c);
   scheduleMonthlyDigest(c);
 });

@@ -1,3 +1,4 @@
+const metrics = require('../utils/metrics');
 import express from 'express';
 import pool from '../data/db.js';
 import { ValidationError, parseId, requireNonEmptyString } from '../utils/validate.js';
@@ -12,10 +13,11 @@ function normalize(row) {
 // GET all collections
 router.get('/', async (req, res) => {
   try {
+    metrics.increment('collections');
     const result = await pool.query('SELECT * FROM collections ORDER BY id DESC');
     res.json(result.rows.map(normalize));
   } catch (err) {
-    console.error(err);
+    console.error('[collections]', err);
     res.status(500).json({ error: "Failed to read collections" });
   }
 });
@@ -23,6 +25,7 @@ router.get('/', async (req, res) => {
 // GET collection by ID
 router.get('/:id', async (req, res) => {
   try {
+    metrics.increment('collections');
     const id = parseId(req.params.id);
     const result = await pool.query('SELECT * FROM collections WHERE id = $1', [id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Collection not found' });
@@ -36,6 +39,7 @@ router.get('/:id', async (req, res) => {
 // POST add new collection
 router.post('/', async (req, res) => {
   try {
+    metrics.increment('collections');
     const name = requireNonEmptyString(req.body.name, 'name');
     const id = Date.now();
     const result = await pool.query(
@@ -45,7 +49,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(normalize(result.rows[0]));
   } catch (err) {
     if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
-    console.error(err);
+    console.error('[collections]', err);
     res.status(500).json({ error: "Failed to create collection" });
   }
 });
@@ -53,6 +57,7 @@ router.post('/', async (req, res) => {
 // PUT update collection
 router.put('/:id', async (req, res) => {
   try {
+    metrics.increment('collections');
     const id = parseId(req.params.id);
     const name = requireNonEmptyString(req.body.name, 'name');
     const result = await pool.query(
@@ -70,6 +75,7 @@ router.put('/:id', async (req, res) => {
 // DELETE collection
 router.delete('/:id', async (req, res) => {
   try {
+    metrics.increment('collections');
     const id = parseId(req.params.id);
     const result = await pool.query(
       'DELETE FROM collections WHERE id = $1 RETURNING *',
