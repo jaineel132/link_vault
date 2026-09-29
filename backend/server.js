@@ -33,5 +33,5 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;   // Render sets PORT automatically
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log('[server]', `Server running on port ${PORT}`);
 });

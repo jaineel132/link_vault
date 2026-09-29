@@ -44,7 +44,7 @@ export default function App() {
         setLinks(l || []);
         setCollections(c || []);
       } catch (e) {
-        console.error(e);
+        console.error('[App]', e);
       } finally {
         setLoading(false);
       }

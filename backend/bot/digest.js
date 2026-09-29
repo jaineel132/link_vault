@@ -58,7 +58,7 @@ function getChannel(client) {
 // ── Weekly — every Monday 9am Kigali (UTC+2) ─────────────────────────────────
 export function scheduleWeeklyDigest(client) {
   cron.schedule('0 7 * * 1', async () => {
-    console.log('📊 Running weekly digest...');
+    console.log('[digest]', '📊 Running weekly digest...');
     try {
       const to = new Date(), from = new Date();
       from.setDate(from.getDate() - 7);
@@ -71,16 +71,16 @@ export function scheduleWeeklyDigest(client) {
       const label  = `${fmt(from)} – ${fmt(to)}`;
       const digest = await generateDigest(links, `week (${label})`);
       ch.send(`📊 **Weekly LinVault Digest** — ${label}\nYou saved **${links.length} link${links.length !== 1 ? 's' : ''}** this week.\n\n` + (digest || 'Could not generate summary.'));
-    } catch (e) { console.error('Weekly digest error:', e); }
+    } catch (e) { console.error('[digest]', 'Weekly digest error:', e); }
   }, { timezone: 'Africa/Kigali' });
 
-  console.log('✅ Weekly digest — Mondays 9am Kigali');
+  console.log('[digest]', '✅ Weekly digest — Mondays 9am Kigali');
 }
 
 // ── Monthly — 1st of month 9am Kigali ────────────────────────────────────────
 export function scheduleMonthlyDigest(client) {
   cron.schedule('0 7 1 * *', async () => {
-    console.log('📊 Running monthly digest...');
+    console.log('[digest]', '📊 Running monthly digest...');
     try {
       const now  = new Date();
       const to   = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -100,8 +100,8 @@ export function scheduleMonthlyDigest(client) {
 
       const digest = await generateDigest(links, `month of ${monthName}`);
       ch.send(`📅 **Monthly LinVault Digest — ${monthName}**\nYou saved **${links.length} links**:\n${collLines}\n\n` + (digest || 'Could not generate summary.'));
-    } catch (e) { console.error('Monthly digest error:', e); }
+    } catch (e) { console.error('[digest]', 'Monthly digest error:', e); }
   }, { timezone: 'Africa/Kigali' });
 
-  console.log('✅ Monthly digest — 1st of month 9am Kigali');
+  console.log('[digest]', '✅ Monthly digest — 1st of month 9am Kigali');
 }

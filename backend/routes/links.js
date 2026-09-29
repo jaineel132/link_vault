@@ -1,3 +1,4 @@
+const metrics = require('../utils/metrics');
 import express from 'express';
 import pool from '../data/db.js';
 import {
@@ -26,10 +27,11 @@ function normalize(row) {
 // GET all links
 router.get('/', async (req, res) => {
   try {
+    metrics.increment('links');
     const result = await pool.query('SELECT * FROM links ORDER BY id DESC');
     res.json(result.rows.map(normalize));
   } catch (err) {
-    console.error(err);
+    console.error('[links]', err);
     res.status(500).json({ error: "Failed to read links" });
   }
 });
@@ -37,6 +39,7 @@ router.get('/', async (req, res) => {
 // GET unassigned — MUST be before /:id
 router.get('/unassigned', async (req, res) => {
   try {
+    metrics.increment('links');
     const result = await pool.query('SELECT * FROM links WHERE collection_id IS NULL ORDER BY id DESC');
     res.json(result.rows.map(normalize));
   } catch (err) {
@@ -47,6 +50,7 @@ router.get('/unassigned', async (req, res) => {
 // GET links by collection — MUST be before /:id
 router.get('/collection/:id', async (req, res) => {
   try {
+    metrics.increment('links');
     const collectionId = parseId(req.params.id, 'collection id');
     const result = await pool.query(
       'SELECT * FROM links WHERE collection_id = $1 ORDER BY id DESC',
@@ -62,6 +66,7 @@ router.get('/collection/:id', async (req, res) => {
 // GET link by ID
 router.get('/:id', async (req, res) => {
   try {
+    metrics.increment('links');
     const id = parseId(req.params.id);
     const result = await pool.query('SELECT * FROM links WHERE id = $1', [id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Link not found' });
@@ -75,6 +80,7 @@ router.get('/:id', async (req, res) => {
 // POST add new link
 router.post('/', async (req, res) => {
   try {
+    metrics.increment('links');
     const name = requireNonEmptyString(req.body.name, 'name');
     const url = requireValidUrl(req.body.url, 'url');
     const notes = optionalString(req.body.notes, 'notes');
@@ -103,7 +109,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(normalize(result.rows[0]));
   } catch (err) {
     if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
-    console.error(err);
+    console.error('[links]', err);
     res.status(500).json({ error: "Failed to add link" });
   }
 });
@@ -111,6 +117,7 @@ router.post('/', async (req, res) => {
 // PUT update link
 router.put('/:id', async (req, res) => {
   try {
+    metrics.increment('links');
     const id = parseId(req.params.id);
 
     // Every field here is optional on update — but if present, it must be
@@ -160,6 +167,7 @@ router.put('/:id', async (req, res) => {
 // DELETE link
 router.delete('/:id', async (req, res) => {
   try {
+    metrics.increment('links');
     const id = parseId(req.params.id);
     const result = await pool.query('DELETE FROM links WHERE id = $1 RETURNING *', [id]);
     if (result.rows.length === 0) return res.status(404).json({ error: "Link not found" });
