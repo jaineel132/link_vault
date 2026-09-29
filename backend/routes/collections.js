@@ -12,7 +12,7 @@ function normalize(row) {
 // GET all collections
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM collections ORDER BY name ASC');
+    const result = await pool.query('SELECT * FROM collections ORDER BY name ASC, id DESC');
     res.json(result.rows.map(normalize));
   } catch (err) {
     console.error(err);
