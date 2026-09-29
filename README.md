@@ -317,3 +317,7 @@ Not sure where to start? Check the [Roadmap](#roadmap) above or browse [open iss
 ## License
 
 Licensed under the [ISC License](./LICENSE).
+
+## Running the tests
+
+Start the backend, then open http://localhost:5173 and add a link.
