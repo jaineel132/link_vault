@@ -36,7 +36,7 @@ async function flushBatch(channelId, channel) {
 function extractUrls(text) {
   text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '$2');
   if (!text.match(/https?:\/\//i) && text.includes('.')) text = 'https://' + text.trim();
-  return [...new Set((text.match(/https?:\/\/[^\s<>"]+/gi) || []))];
+  return [...new Set((text.match(/https?:\/\/[^\s<>"]+/gi) || []).map(u => u.replace(/[.,)]+$/, '')))];
 }
 
 // ── Groq classify ─────────────────────────────────────────────────────────────
