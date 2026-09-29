@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     res.json(result.rows.map(normalize));
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to read collections" });
+    res.status(500).json({ error: "Could not load collections, please try again" });
   }
 });
 
