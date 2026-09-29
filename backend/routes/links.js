@@ -115,21 +115,11 @@ router.put('/:id', async (req, res) => {
 
     // Every field here is optional on update — but if present, it must be
     // valid. COALESCE in the query keeps whatever wasn't sent unchanged.
-    const name = req.body.name !== undefined
-      ? requireNonEmptyString(req.body.name, 'name')
-      : null;
-    const url = req.body.url !== undefined
-      ? requireValidUrl(req.body.url, 'url')
-      : null;
-    const notes = req.body.notes !== undefined
-      ? optionalString(req.body.notes, 'notes')
-      : null;
-    const collectionId = req.body.collectionId !== undefined
-      ? optionalId(req.body.collectionId, 'collectionId')
-      : null;
-    const tags = req.body.tags !== undefined
-      ? optionalStringArray(req.body.tags, 'tags')
-      : null;
+    const name = req.body.name ?? null;
+    const url = req.body.url ?? null;
+    const notes = req.body.notes ?? null;
+    const collectionId = req.body.collectionId ?? null;
+    const tags = req.body.tags ?? null;
 
     // if url is being updated alongside tags, recalculate domain tag
     let updatedTags = tags;
