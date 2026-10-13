@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
 // POST add new collection
 router.post('/', async (req, res) => {
   try {
-    const name = requireNonEmptyString(req.body.name, 'name');
+    const { name } = req.body;
     const id = Date.now();
     const result = await pool.query(
       'INSERT INTO collections (id, name) VALUES ($1, $2) RETURNING *',
