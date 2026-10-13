@@ -72,6 +72,22 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// GET search links by name
+router.get('/search', async (req, res) => {
+  try {
+    const term = requireNonEmptyString(req.query.q, 'q');
+    const result = await pool.query(
+      'SELECT * FROM links WHERE name ILIKE $1 ORDER BY id DESC LIMIT 50',
+      [`%${term}%`]
+    );
+    res.json(result.rows.map(normalize));
+  } catch (err) {
+    if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: "Failed to search links" });
+  }
+});
+
 // POST add new link
 router.post('/', async (req, res) => {
   try {
